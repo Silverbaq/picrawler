@@ -158,13 +158,25 @@ class GeminiHelper():
             
             tts = gTTS(text=text, lang='en', slow=False)
             
+            # gTTS saves as mp3
             temp_mp3 = output_file
-            if not output_file.endswith('.mp3'):
-               temp_mp3 = output_file + ".mp3"
+            if not temp_mp3.endswith('.mp3'):
+               temp_mp3 = os.path.splitext(output_file)[0] + ".mp3"
             
             tts.save(temp_mp3)
             
-            if output_file != temp_mp3:
+            # If output format requested is different (e.g. wav), convert it
+            if output_file.endswith('.wav'):
+                 from pydub import AudioSegment
+                 sound = AudioSegment.from_mp3(temp_mp3)
+                 sound.export(output_file, format="wav")
+                 # Optional: clean up temp mp3 if it wasn't the requested output
+                 if temp_mp3 != output_file:
+                     try:
+                        os.remove(temp_mp3)
+                     except:
+                        pass
+            elif output_file != temp_mp3:
                  shutil.move(temp_mp3, output_file)
             
             return True

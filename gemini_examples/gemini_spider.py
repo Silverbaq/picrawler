@@ -365,7 +365,7 @@ def main():
                 if not os.path.exists("./tts"):
                     os.makedirs("./tts")
                     
-                _tts_f = f"./tts/{_time}_raw.mp3" # gTTS saves as mp3
+                _tts_f = f"./tts/{_time}_raw.wav" # gTTS saves as mp3, helper converts to wav
                 
                 _tts_status = gemini_helper.text_to_speech(answer, _tts_f, TTS_VOICE) 
                 

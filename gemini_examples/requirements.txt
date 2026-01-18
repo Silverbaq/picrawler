@@ -4,3 +4,4 @@ SpeechRecognition
 pyaudio
 opencv-python
 sox
+pydub
