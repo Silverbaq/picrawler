@@ -1,105 +1,113 @@
-# Picrawler Gemini examples usage
+# PiCrawler Gemini Assistant
 
-----------------------------------------------------------------
+A modular, AI-powered voice assistant for the SunFounder PiCrawler robot, powered by Google's Gemini 2.0 Flash thinking model.
 
-## Install dependencies
+This project transforms the PiCrawler into an interactive robot that can see, hear, speak, and move, featuring **Local Wake Word detection**, **Continuous Conversation**, and **Smart Vision**.
 
-- Make sure you have installed PiCrawler and related dependencies first
-    <https://docs.sunfounder.com/projects/pi-crawler/en/latest/python/python_start/download_and_run_code.html#install-all-the-modules>
+## 🌟 Features
 
-- Install Google Gemini and speech processing libraries
+*   **🧠 Advanced AI**: Uses Google Gemini 2.0 Flash for natural understanding and complex reasoning.
+*   **🗣️ Local Wake Word**: Listens for "Hey Jarvis" (or other configured models) locally using `openwakeword`. This is fast, private, and saves API costs.
+*   **🔄 Continuous Conversation**: Holds a natural back-and-forth dialogue without needing the wake word for every sentence.
+*   **👁️ Smart Vision**: The robot can "see" through its camera. It intelligently captures images only when you ask visual questions (e.g., "What is this?", "Look at the red ball").
+*   **🤖 Hardware Awareness**:
+    *   **Face Centering**: Turns to face you when woken up (requires Face detection enabled).
+    *   **Emotive Sounds**: Plays sounds for waking up, thinking, and sleeping.
+    *   **Movement**: Can perform actions like "Wave", "Sit", "Stand", "Dance", and walking movements.
 
-> [!Note]
-> When using pip install on Raspberry Pi OS (Debian based), you may encounter errors about system-managed packages (e.g. `typing_extensions`). 
-> **Option 1 (Recommended): Use a Virtual Environment**
-> ```bash
-> python3 -m venv venv
-> source venv/bin/activate
-> pip3 install -r requirements.txt
-> ```
-> 
-> **Option 2: Force Global Install**
-> If you must install globally and face `uninstall-no-record-file` errors, add `--ignore-installed`:
-> ```bash
-> sudo pip3 install -U google-generativeai gTTS SpeechRecognition --break-system-packages --ignore-installed
-> ```
+## 🛠️ Requirements
 
-    ```bash
-    # Install Python dependencies for Gemini, TTS, and Audio
-    # Use --ignore-installed to avoid conflicts with apt-installed packages
-    sudo pip3 install -U google-generativeai gTTS SpeechRecognition --break-system-packages --ignore-installed
+*   **SunFounder PiCrawler**: [Official Documentation](https://docs.sunfounder.com/projects/pi-crawler/en/latest/)
+*   **Raspberry Pi**: (Pi 4 or 5 recommended for best AI performance)
+*   **Peripherals**: Robot HAT, Camera module, Speaker, Microphone (USB or HAT-integrated).
 
-    # Install system audio dependencies
-    sudo apt install python3-pyaudio
-    sudo apt install sox libsox-fmt-mp3
-    sudo pip3 install -U sox --break-system-packages --ignore-installed
-    ```
+## 🚀 Installation
 
-----------------------------------------------------------------
-
-## Setup Google Gemini
-
-### GET API KEY
-
-<https://aistudio.google.com/app/apikey>
-
-Fill your `GEMINI_API_KEY` into the `keys.py` file.
-
-```python
-GEMINI_API_KEY = "AIzaS..." 
-```
-
-### System Instruction
-
-The system instruction (behavior of the robot) is now defined directly in `gemini_spider.py` instead of being configured on a remote assistant platform. You can modify the `system_instruction` string in the code if you want to change its personality.
-
-----------------------------------------------------------------
-
-## Run
-
-> [!Important]
-> If you used a virtual environment, make sure it is activated (`source venv/bin/activate`) before running!
-> If running with `sudo` while using a user-created virtual environment, you might need to use the full path to the python executable (e.g., `sudo /home/pi/picrawler/gemini_examples/venv/bin/python3 gemini_spider.py`).
-
-- Run with voice
-
+### 1. System Dependencies
+Ensure you have the basic system libraries for audio and vision:
 ```bash
-sudo python3 gemini_spider.py
+sudo apt update
+sudo apt install python3-pyaudio sox libsox-fmt-mp3 libatlas-base-dev
 ```
+*(Note: `libatlas-base-dev` is often needed for numpy/opencv)*
 
-- Run with keyboard
-
+### 2. Python Environment (Recommended)
+Create a virtual environment to avoid conflicts:
 ```bash
-sudo python3 gemini_spider.py --keyboard
+cd /home/pi/picrawler/gemini_examples
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-- Run without image analysis
-
+### 3. Install Python Packages
 ```bash
-sudo python3 gemini_spider.py --keyboard --no-img
+pip install -r requirements.txt
 ```
 
-> [!Warning]
-> You need to run with `sudo`, otherwise there may be no sound from the speaker or access to GPIO.
+## ⚙️ Configuration
 
-## Modify parameters [optional]
-
-- Set language of STT
-
-    Config `LANGUAGE` variable in the file `gemini_spider.py`. Default is `'en'`.
-
-- Set TTS volume gain
-
-    After TTS, the audio volume will be increased using sox, and the gain can be set through the `"VOLUME_DB"` parameter, preferably not exceeding `5`, as going beyond this might result in audio distortion.
-
-- Select TTS voice role
-
-    Config `TTS_VOICE` variable in the file `gemini_spider.py`. This uses `gTTS` (Google Translate TTS), so the voice parameter corresponds to language codes (e.g., `'en'`, `'es'`, `'fr'`).
-
-```python
-gemini_helper = GeminiHelper(GEMINI_API_KEY, assistant_name='PiCrawler', system_instruction=system_instruction)
-
-LANGUAGE = 'en'
-VOLUME_DB = 3 
-TTS_VOICE = 'en' 
+### 1. API Keys
+Rename the example environment file and add your Gemini API Key:
+```bash
+cp .env.example .env
+nano .env
 ```
+Inside `.env`:
+```ini
+GEMINI_API_KEY=your_actual_api_key_here
+```
+Get your key from [Google AI Studio](https://aistudio.google.com/).
+
+### 2. Fine-tuning (`config.py`)
+Edit `config.py` to customize behavior:
+*   **`TRIGGER_WORDS`**: Fallback keywords if local wake word fails or for text mode.
+*   **`WAKE_WORD_MODELS`**: Change the local wake word model (default: `hey_jarvis_v0.1`).
+    *   *Note: `openwakeword` supports many models like `alexa`, `hey_mycroft`, etc.*
+*   **`SOUNDS`**: Path to your sound effect files.
+*   **`VISION_KEYWORDS`**: Words that trigger image capture.
+
+## 🎮 Usage
+
+Run the main orchestrator script:
+```bash
+# If using hardware (GPIO/Audio), sudo is often required
+sudo ./venv/bin/python main.py
+```
+
+### Voice Mode (Default)
+1.  **Wake**: Say **"Hey Jarvis"**.
+    *   The robot will chirp, wake up, and try to center its camera on your face.
+2.  **Command**: Ask a question or give a command.
+    *   *"Wave your hand!"*
+    *   *"What do you see?"* (Triggers Vision)
+    *   *"Tell me a joke about robots."*
+3.  **Chat**: The robot replies. You have **5 seconds** to reply back without saying the wake word again.
+4.  **End**: Stop talking, or say *"Good bye"* / *"Stop"* to end the session.
+
+### Keyboard Mode
+Run with `--keyboard` to type commands instead of speaking:
+```bash
+sudo python main.py --keyboard
+```
+
+## 📂 Architecture
+
+The project is modularized for easier development:
+
+*   **`main.py`**: The central brain. Manages the loop between Hearing -> Thinking -> Speaking/Moving.
+*   **`gemini_agent.py`**: Wraps the Google GenAI SDK. Handles prompt engineering and JSON parsing.
+*   **`voice_assistant.py`**: Handles Audio I/O.
+    *   Runs `openwakeword` on a background stream.
+    *   Uses `SpeechRecognition` (Google) for command transcription.
+    *   Uses `gTTS` -> `pydub` -> `Speaker` for output.
+*   **`robot_controller.py`**: Manages the physical robot.
+    *   Queues movements to run in a background thread (non-blocking).
+    *   Controls LEDs and Sound Effects.
+*   **`vision_module.py`**: Uses OpenCV to detect faces and calculate offsets for the robot to turn.
+*   **`config.py`**: Central configuration file.
+
+## ⚠️ Troubleshooting
+
+*   **"Vision libraries not found"**: Ensure `opencv-python` is installed. If using a Pi Camera, ensure your `vilib` or hardware interfaces (Legacy Camera vs Libcamera) are enabled in `raspi-config`.
+*   **Audio Issues**: Use `alsamixer` to check microphone and speaker levels. If "Hey Jarvis" isn't detected, try speaking closer or adjusting `WAKE_WORD_THRESHOLD` in `config.py`.
+*   **Permission Denied**: GPIO and some Audio drivers require root. Use `sudo` to run the script.
