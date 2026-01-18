@@ -8,8 +8,8 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Helper Config
-GEMINI_MODEL = "gemini-2.5-flash"
-GEMINI_MODEL_FALLBACK = "gemini-1.5-flash-002"
+GEMINI_MODEL = "gemini-2.5-flash-lite"
+GEMINI_MODEL_FALLBACK = "gemini-2.5-flash"
 ASSISTANT_NAME = "PiCrawler"
 ASSISTANT_DESCRIPTION_FILE = "assistant_description"
 
