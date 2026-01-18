@@ -10,16 +10,29 @@
 - Install Google Gemini and speech processing libraries
 
 > [!Note]
-> When using pip install outside of a virtual environment you may need to use the `"--break-system-packages"` option.
+> When using pip install on Raspberry Pi OS (Debian based), you may encounter errors about system-managed packages (e.g. `typing_extensions`). 
+> **Option 1 (Recommended): Use a Virtual Environment**
+> ```bash
+> python3 -m venv venv
+> source venv/bin/activate
+> pip3 install -r requirements.txt
+> ```
+> 
+> **Option 2: Force Global Install**
+> If you must install globally and face `uninstall-no-record-file` errors, add `--ignore-installed`:
+> ```bash
+> sudo pip3 install -U google-generativeai gTTS SpeechRecognition --break-system-packages --ignore-installed
+> ```
 
     ```bash
     # Install Python dependencies for Gemini, TTS, and Audio
-    sudo pip3 install -U google-generativeai gTTS SpeechRecognition --break-system-packages
+    # Use --ignore-installed to avoid conflicts with apt-installed packages
+    sudo pip3 install -U google-generativeai gTTS SpeechRecognition --break-system-packages --ignore-installed
 
     # Install system audio dependencies
     sudo apt install python3-pyaudio
     sudo apt install sox libsox-fmt-mp3
-    sudo pip3 install -U sox --break-system-packages
+    sudo pip3 install -U sox --break-system-packages --ignore-installed
     ```
 
 ----------------------------------------------------------------
@@ -43,6 +56,10 @@ The system instruction (behavior of the robot) is now defined directly in `gemin
 ----------------------------------------------------------------
 
 ## Run
+
+> [!Important]
+> If you used a virtual environment, make sure it is activated (`source venv/bin/activate`) before running!
+> If running with `sudo` while using a user-created virtual environment, you might need to use the full path to the python executable (e.g., `sudo /home/pi/picrawler/gemini_examples/venv/bin/python3 gemini_spider.py`).
 
 - Run with voice
 

@@ -4,7 +4,8 @@ import time
 import shutil
 import json
 import ast
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from gtts import gTTS
 import speech_recognition as sr
 
@@ -42,17 +43,21 @@ class GeminiHelper():
     def __init__(self, api_key, assistant_name='picrawler', system_instruction=None) -> None:
         self.api_key = api_key
         self.assistant_name = assistant_name
+        self.system_instruction = system_instruction
+        self.model_name = 'gemini-1.5-flash'
         
-        genai.configure(api_key=self.api_key)
+        # Initialize the new Client
+        self.client = genai.Client(api_key=self.api_key)
         
-        # Configure the model
-        # using gemini-1.5-flash for speed, or gemini-1.5-pro for better reasoning
-        self.model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash',
-            system_instruction=system_instruction
+        # In the new SDK, chat sessions are often managed by maintaining history manually or using chats.create().
+        # google-genai v1.0 has chats.create
+        self.chat = self.client.chats.create(
+            model=self.model_name,
+            config=types.GenerateContentConfig(
+                system_instruction=system_instruction
+            ),
+            history=[]
         )
-        
-        self.chat = self.model.start_chat(history=[])
 
     def stt(self, audio, language='en'):
         # using speech_recognition's google recognizer (free)
@@ -74,7 +79,8 @@ class GeminiHelper():
     def dialogue(self, msg):
         chat_print("user", msg)
         try:
-            response = self.chat.send_message(msg)
+            # New SDK usage: chat.send_message(message=...)
+            response = self.chat.send_message(message=msg)
             
             value = response.text
             chat_print(self.assistant_name, value)
@@ -115,16 +121,14 @@ class GeminiHelper():
                 print(f"Image not found: {img_path}")
                 return self.dialogue(msg)
 
-            # Gemini handles PIL images or just bytes
-            # For simplicity with the SDK, uploading the file using the File API is often cleaner for chat context,
-            # but providing it directly in generate_content works too. 
-            # Since we are in a chat session, we need to send it as part of the message.
-            
             # Using PIL
             import PIL.Image
             img = PIL.Image.open(img_path)
             
-            response = self.chat.send_message([msg, img])
+            # In google-genai, we can pass a list of contents including the image
+            # message can be a string or list of contents
+            
+            response = self.chat.send_message(message=[msg, img])
             
             value = response.text
             chat_print(self.assistant_name, value)
