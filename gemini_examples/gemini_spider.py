@@ -46,7 +46,13 @@ if len(GEMINI_API_KEY) < 10:
 
 # Construct system instruction
 action_list = list(actions_dict.keys())
-system_instruction = f"""
+# Read system instruction from file
+try:
+    with open('assistant_description', 'r') as f:
+        system_instruction = f.read()
+except FileNotFoundError:
+    print("Warning: 'assistant_description' file not found. Using default instruction.")
+    system_instruction = f"""
 You are a robot controller for a hexapod robot named PiCrawler.
 You can converse with the user and perform actions.
 
@@ -55,14 +61,6 @@ Available actions you can perform are: {action_list}.
 When you reply, you MUST output a valid JSON object with two fields:
 1. 'actions': A list of strings corresponding to the actions you want to perform from the available list. If no action is needed, use an empty list.
 2. 'answer': A string containing your verbal response to the user.
-
-Example format:
-{{
-  "actions": ["sit", "wave_hand"],
-  "answer": "I am sitting down and waving at you."
-}}
-
-If the user asks you to do something that isn't in the list, explain that you can't do that yet.
 """
 
 gemini_helper = GeminiHelper(GEMINI_API_KEY, assistant_name='PiCrawler', system_instruction=system_instruction)
