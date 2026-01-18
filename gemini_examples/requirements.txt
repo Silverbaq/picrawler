@@ -1,0 +1,5 @@
+google-generativeai
+gTTS
+SpeechRecognition
+pyaudio
+opencv-python
