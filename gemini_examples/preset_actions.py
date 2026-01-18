@@ -457,6 +457,20 @@ def push_up(spider):
         spider.do_step(coord, 80)
 
 
+def move_forward(spider):
+    spider.do_action('forward', step=2, speed=80) 
+
+def move_backward(spider):
+    spider.do_action('backward', step=2, speed=80)
+
+def turn_left(spider):
+    spider.do_action('turn left', step=2, speed=80)
+
+def turn_right(spider):
+    spider.do_action('turn right', step=2, speed=80)
+
+
+
 actions_dict = {
     "sit": sit,
     "stand": stand,
@@ -471,12 +485,17 @@ actions_dict = {
     "play_dead": play_dead,
     "nod": nod,
     "shake_head": shake_head,
-    # "look_left": look_left,
-    # "look_right": look_right,
+    "shake_head": shake_head,
+    "look_left": look_left,
+    "look_right": look_right,
     "look_up": look_up,
     "look_down": look_down,
     "warm_up": warm_up,
     "push_up": push_up,
+    "move_forward": move_forward,
+    "move_backward": move_backward,
+    "turn_left": turn_left,
+    "turn_right": turn_right,
 }
 
 
