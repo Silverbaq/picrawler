@@ -5,3 +5,7 @@ pyaudio
 opencv-python
 sox
 pydub
+python-dotenv
+openwakeword
+onnxruntime
+numpy
