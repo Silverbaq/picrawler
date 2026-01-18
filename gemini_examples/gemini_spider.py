@@ -235,6 +235,15 @@ def main():
     speak_thread.start()
     action_thread.start()
 
+    # Initial ambient noise adjustment
+    if input_mode == 'voice':
+        gray_print("Adjusting for ambient noise... Please be quiet.")
+        _stderr_back = redirect_error_2_null()
+        with sr.Microphone(chunk_size=8192) as source:
+            cancel_redirect_error(_stderr_back)
+            recognizer.adjust_for_ambient_noise(source, duration=2)
+            gray_print(f"Energy threshold set to {recognizer.energy_threshold}")
+
     while True:
         if input_mode == 'voice':
             my_spider.do_action('stand', speed=60)
@@ -249,7 +258,7 @@ def main():
             _stderr_back = redirect_error_2_null() 
             with sr.Microphone(chunk_size=8192) as source:
                 cancel_redirect_error(_stderr_back) 
-                recognizer.adjust_for_ambient_noise(source)
+                # recognizer.adjust_for_ambient_noise(source) # Moved to start of main
                 try:
                     audio = recognizer.listen(source, timeout=5) # Added timeout to prevent hanging
                 except sr.WaitTimeoutError:
