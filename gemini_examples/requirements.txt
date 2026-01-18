@@ -3,3 +3,4 @@ gTTS
 SpeechRecognition
 pyaudio
 opencv-python
+sox
