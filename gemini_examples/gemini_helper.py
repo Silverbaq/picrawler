@@ -56,7 +56,8 @@ class GeminiHelper():
             self.chat = self.client.chats.create(
                 model=self.model_name,
                 config=types.GenerateContentConfig(
-                    system_instruction=system_instruction
+                    system_instruction=system_instruction,
+                    response_mime_type="application/json"
                 ),
                 history=[]
             )
@@ -67,7 +68,8 @@ class GeminiHelper():
             self.chat = self.client.chats.create(
                 model=self.model_name,
                 config=types.GenerateContentConfig(
-                    system_instruction=system_instruction
+                    system_instruction=system_instruction,
+                    response_mime_type="application/json"
                 ),
                 history=[]
             )
