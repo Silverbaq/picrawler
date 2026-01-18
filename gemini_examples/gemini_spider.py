@@ -258,12 +258,34 @@ def main():
             # stt
             # ----------------------------------------------------------------
             st = time.time()
-            _result = gemini_helper.stt(audio, language=LANGUAGE)
-            gray_print(f"stt takes: {time.time() - st:.3f} s")
-
-            if _result == False or _result == "":
-                print() # new line
+            # Use verbose=False to suppress "could not understand" errors in the loop
+            _result = gemini_helper.stt(audio, language=LANGUAGE, verbose=False)
+            
+            if _result:
+                gray_print(f"Heard: {_result} (t={time.time() - st:.3f}s)")
+                
+                # Trigger Word Check
+                # Define trigger words/phrases
+                TRIGGER_WORDS = ["hey robot", "hi robot", "picrawler", "pi crawler", "spider", "hey google", "gemini"]
+                
+                # Check if result contains any trigger word
+                should_respond = False
+                lower_result = _result.lower()
+                for trigger in TRIGGER_WORDS:
+                   if trigger in lower_result:
+                       should_respond = True
+                       break
+                
+                if not should_respond:
+                   # gray_print("Ignored (No trigger word)")
+                   print(".", end="", flush=True) # Simple alive indicator
+                   continue
+            else:
+                # print() # new line
+                print(".", end="", flush=True) # Simple alive indicator
                 continue
+
+            gray_print(f"\nProcessing: {_result}")
 
         elif input_mode == 'keyboard':
             my_spider.do_action('stand', speed=60)

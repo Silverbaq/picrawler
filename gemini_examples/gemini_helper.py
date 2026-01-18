@@ -72,7 +72,7 @@ class GeminiHelper():
                 history=[]
             )
 
-    def stt(self, audio, language='en'):
+    def stt(self, audio, language='en', verbose=True):
         # using speech_recognition's google recognizer (free)
         r = sr.Recognizer()
         try:
@@ -80,13 +80,16 @@ class GeminiHelper():
             text = r.recognize_google(audio, language=language)
             return text
         except sr.UnknownValueError:
-            print("Google Speech Recognition could not understand audio")
+            if verbose:
+                print("Google Speech Recognition could not understand audio")
             return False
         except sr.RequestError as e:
-            print(f"Could not request results from Google Speech Recognition service; {e}")
+            if verbose:
+                print(f"Could not request results from Google Speech Recognition service; {e}")
             return False
         except Exception as e:
-            print(f"stt err:{e}")
+            if verbose:
+                print(f"stt err:{e}")
             return False
 
     def dialogue(self, msg):
