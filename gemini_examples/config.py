@@ -31,6 +31,14 @@ IMG_INPUT_PATH = "./img_input.jpg"
 TRIGGER_WORDS = ["hey robot", "hi robot", "picrawler", "pi crawler", "spider", "hey google", "gemini"]
 WAKE_WORD_MODELS = ["hey_jarvis_v0.1"] # openwakeword models
 WAKE_WORD_THRESHOLD = 0.5
+VISION_KEYWORDS = ["look", "see", "watch", "view", "what is this", "scan", "read"]
+
+# Sound Effects (File paths)
+SOUNDS = {
+    "wake": "./sounds/wake.wav",
+    "sleep": "./sounds/sleep.wav",
+    "think": "./sounds/think.wav",
+}
 SOUND_EFFECT_ACTIONS = []
 
 # Action Config

@@ -116,7 +116,22 @@ class RobotController:
         self.state = 'actions'
 
     def set_state(self, new_state):
-        self.state = new_state
+        if self.state != new_state:
+            self.state = new_state
+            # Play state change sound
+            if new_state in config.SOUNDS:
+                self.play_sound(config.SOUNDS[new_state])
+
+    def play_sound(self, file_path):
+        import os
+        if os.path.exists(file_path):
+           try:
+               # Use Music class to play ?
+               # The music class sound_play might be blocking or non-blocking?
+               # Let's assume non-blocking or short sounds.
+               self.music.sound_play(file_path, 100)
+           except Exception as e:
+               print(f"Sound Error: {e}")
     
     def cleanup(self):
         self.stop_event.set()
